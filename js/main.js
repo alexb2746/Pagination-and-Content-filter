@@ -3,20 +3,28 @@ const studentList = $('.student-list').children();
 const getName = $('.email').siblings('h3');
 const paginationList = document.getElementById('paginationLinks');
 
+// Hide all except the first 10 students
 for (let i = 10; i < studentList.length; i += 1) {
     $(studentList[i]).hide();
 }
 
+// For every 10 students add a link at the bottom
 let count = 1;
 for (let i = 10; i < studentList.length; i += 10) {
     let countAsString = String(count);
     $(paginationList).append(
         '<li><a id="page' + countAsString + '">' + countAsString + '</a></li>'
     );
-
     count += 1;
 }
 
+/* If any of the a links in the pagination list id are clicked
+   Since they are given the ID's "page#" we can loop through
+   all of them and see if it equals the the event target id.
+   Then based on that number we can times it by 10 - 1 to get the start
+   and add 10 for the end. Loop through those numbers for showing the
+   student list.
+*/
 $(paginationList).on('click', 'a', function() {
     for(let i = 1; i <= $(paginationList).children().length; i += 1) {
         let idCheck = 'page' + String(i);
@@ -53,7 +61,7 @@ compareNames = (arr, searchText) => {
 }
 
 
-// Arrays for search box
+// Arrays for search box to names comparison
 let emailNames = getText('.email');
 let names = getText(getName);
 emailNames = Array.from(emailNames);
@@ -80,18 +88,29 @@ $('#searchButton').click(function() {
     search();
 });
 
+/* This function will grab the value in the input box, create an array called
+   searchReturn that calls a function with that value and gets an array of
+   emails and names that contain/includes that value. It then loops through
+   the entire studentList and sees if each stuent is wihtin the searchReturn
+   aray. Then shows those students, if none send an alert and empty the input
+   box.
+*/
 search = () => {
     $(studentList).hide();
+
     let searchText = $('#searchBox').val().toLowerCase();
+
     searchReturn = compareNames(emailNames, searchText);
     searchReturn.push(compareNames(names, searchText));
-    for (let i = 0; i < studentList.length; i += 1) {
-        for (let k = 0; k < searchReturn.length; k += 1) {
-            if (studentList[i].innerText.includes(searchReturn[k])) {
-                $(studentList[i]).show();
+
+    Array.from(studentList).forEach(student => {
+        searchReturn.forEach(search => {
+            if (student.innerText.includes(search)) {
+                $(student).show();
             }
-        }
-    }
+        });
+    });
+
     if (searchReturn == '' ) {
         $(studentList).hide();
         alert('The search returned no results.');
