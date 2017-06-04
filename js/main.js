@@ -1,7 +1,31 @@
-
+// Inital variables
 const studentList = $('.student-list').children();
 const getName = $('.email').siblings('h3');
+const paginationDiv = document.createElement('div');
+const ul = document.createElement('ul');
+const searchBoxDiv = document.createElement('div');
+const input = document.createElement('input');
+const button = document.createElement('button');
+
+// Add pagination links
+const students = document.querySelector('.student-list');
+ul.id = 'paginationLinks';
+paginationDiv.className = 'pagination';
+paginationDiv.appendChild(ul);
+students.after(paginationDiv);
+
 const paginationList = document.getElementById('paginationLinks');
+
+// Add search box
+const header = document.querySelector('.page-header');
+searchBoxDiv.className = 'student-search';
+input.id = 'searchBox';
+input.placeholder = 'Search for students...';
+button.id = 'searchButton';
+button.textContent = 'Search';
+searchBoxDiv.appendChild(input);
+searchBoxDiv.appendChild(button);
+header.appendChild(searchBoxDiv);
 
 // Hide all except the first 10 students
 for (let i = 10; i < studentList.length; i += 1) {
@@ -10,7 +34,7 @@ for (let i = 10; i < studentList.length; i += 1) {
 
 // For every 10 students add a link at the bottom
 let count = 1;
-for (let i = 10; i < studentList.length; i += 10) {
+for (let i = 0; i < studentList.length; i += 10) {
     let countAsString = String(count);
     $(paginationList).append(
         '<li><a id="page' + countAsString + '">' + countAsString + '</a></li>'
@@ -21,17 +45,17 @@ for (let i = 10; i < studentList.length; i += 10) {
 /* If any of the a links in the pagination list id are clicked
    Since they are given the ID's "page#" we can loop through
    all of them and see if it equals the the event target id.
-   Then based on that number we can times it by 10 - 1 to get the start
-   and add 10 for the end. Loop through those numbers for showing the
+   Then based on that number we can times it by 10 to get the end
+   and minus 10 for the start. Loop through those numbers for showing the
    student list.
 */
 $(paginationList).on('click', 'a', function() {
     for(let i = 1; i <= $(paginationList).children().length; i += 1) {
         let idCheck = 'page' + String(i);
-        if (event.target.id == idCheck) {
+        if (event.target.id === idCheck) {
             $(studentList).hide();
-            let start = (i * 10) - 1;
-            let end = start + 10;
+            let end = i * 10;
+            let start = end - 10;
             for (let k = start; k < end; k += 1) {
                 $(studentList[k]).show();
             }
@@ -78,7 +102,7 @@ $('#searchBox').on('keypress', function(e) {
         return false; });
       });
     let code = e.keyCode || e.which;
-    if (code == 13) {
+    if (code === 13) {
       search();
     }
 });
@@ -111,7 +135,7 @@ search = () => {
         });
     });
 
-    if (searchReturn == '' ) {
+    if (searchReturn.length === 1) {
         $(studentList).hide();
         alert('The search returned no results.');
     }
